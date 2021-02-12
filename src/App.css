@@ -19,6 +19,7 @@ body {
 }
 .logo {
   pointer-events: none;
+  height: 10vw;
 }
 .header {
   background-color: #282c34;
@@ -26,16 +27,26 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.5rem;
   font-size: 2rem;
   user-select: none;
+  position: relative;
+}
+.header-title {
+  margin: 0.5rem 0;
+  margin-bottom: 0;
+  font-size: 1.5rem;
 }
 .header .header-box {
   display: flex;
-  width: 100%;
+  width: calc(100% - 2rem);
   align-items: center;
   justify-content: space-between;
   font-size: 1rem;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
 }
 .content {
   background-color: white;
@@ -44,12 +55,20 @@ body {
   flex-direction: column;
   align-items: center;
   flex: 1;
-  padding: 1rem;
+  padding: 0.5rem;
+}
+.content h3 {
+  margin: 0.5rem 0;
+}
+.content form {
+  display: flex;
+  flex-direction: column;
 }
 .content .lotto-inputs {
   display: grid;
   gap: 0.25rem;
   grid-template-columns: repeat(10, 8vw);
+  user-select: none;
 }
 .content .lotto-inputs .lotto-number {
   display: flex;
@@ -60,6 +79,7 @@ body {
   color: #c3372d;
   border: 1px solid #c3372d;
   position: relative;
+  cursor: pointer;
 }
 .content .lotto-inputs .lotto-number.checked::after {
   content: '\274c';
@@ -86,11 +106,36 @@ body {
 }
 
 @media screen and (min-width: 767px) {
+  .header {
+    padding: 1rem;
+  }
+  .header .header-box {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    position: unset;
+    top: unset;
+    left: unset;
+    right: unset;
+  }
+  .logo {
+    height: unset;
+  }
   .content .lotto-inputs {
     grid-template-columns: repeat(10, 2rem);
   }
   .content .lotto-inputs .lotto-number {
     width: 2rem;
     height: 2rem;
+  }
+  .header-title {
+    margin: 1rem 0;
+    margin-bottom: 0;
+    font-size: unset;
+  }
+  .content {
+    padding: 1rem;
   }
 }

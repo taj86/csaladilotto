@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.png';
 import andi from './img/andi.jpg'
 import atis from './img/atis.jpg'
@@ -16,21 +16,29 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+import Paper from '@material-ui/core/Paper';
+import Alert from '@material-ui/lab/Alert';
+
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-    },
+	root: {
+	'& > *': {
+		margin: theme.spacing(1),
+	},
+	'& .MuiTextField-root': {
+		margin: theme.spacing(1),
+		minWidth: 150,
+	}
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 150,
+		margin: theme.spacing(1),
+		minWidth: 150,
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
+	selectEmpty: {
+		marginTop: theme.spacing(2),
   },
 }));
 
@@ -54,7 +62,6 @@ for(var i = 1; i < 91; i++) {
 }
 
 const LottoNumbers = function(props) {
-	console.warn(props)
 	return props.numbers.map(function(number) {
 		let isChecked = props.checkedNumbers.includes(number.toString()) ? 'checked' : '';
 
@@ -73,16 +80,92 @@ Date.prototype.getWeek = function() {
 }
 
 function App() {
-	const [user, setUser] = React.useState('');
-	const [checkedNumbers, setNumbers] = React.useState([]);
-	const [checkedNumber, setNumber] = React.useState("");
+	const [user, setUser] = useState('');
+	const [error, setError] = useState('');
+	const [weeklyNumbersUploaded, setWeeklyNumbersUploaded] = useState(false);
+	const [checkedNumbers, setNumbers] = useState([]);
 	const addItem = function(item) {
-    setNumbers([
-      ...checkedNumbers,
-      item
-    ]);
-    setNumber("");
-  };
+		setError('');
+		if (checkedNumbers.includes(item)) {
+			let newNumbers = checkedNumbers.filter(function(itemToRemove) {
+				return itemToRemove !== item
+			});
+			setNumbers(newNumbers);
+		} else if (checkedNumbers.length < 5) {
+			setNumbers([...checkedNumbers, item]);
+		}
+	};
+
+	const uploadNumbers = function(numbers) {
+		setError('')
+		if (numbers.length < 5) {
+			setError('Megtaníthatlak 5-ig számolni...')
+		} else {
+			const  requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action: 'upload_numbers',
+					payload: {
+						numbers: numbers.sort().join('|'),
+						user: userLoggedIn
+					},
+				}),
+			};
+		
+			fetch("https://taj.co.hu/lotto.php", requestOptions)
+			.then(() => {
+				setWeeklyNumbersUploaded(true) 
+			})
+			.catch(() => {
+				setError('Sajnálom, nem sikerült feltölteni... :(')
+			})
+		}
+	}
+
+	const getNumbers = function() {
+		const  requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				action: 'get_numbers',
+				payload: {
+					week: weekNumber-1,
+					user: userLoggedIn
+				},
+			}),
+		};
+	
+		fetch("https://taj.co.hu/lotto.php", requestOptions)
+			.then((response) => {
+				setNumbers(response.split('|'))
+			})
+			.catch(() => {
+				setError('Sajnálom, nem sikerült lekérni... :(')
+			})
+	}
+
+	const getCurrentUserUploadedNumbers = function() {
+		const  requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				action: 'get_hasuploaded',
+				payload: {
+					week: weekNumber,
+					user: userLoggedIn
+				},
+			}),
+		};
+	
+		fetch("https://taj.co.hu/lotto.php", requestOptions)
+			.then((response) => {
+				setWeeklyNumbersUploaded(true)
+			})
+			.catch(() => {
+				setError('Sajnálom, már induláskor elhasaltam, mint a szar... :(')
+			})
+	}
 
 	const classes = useStyles();
 	const handleChange = (event) => {
@@ -95,6 +178,10 @@ function App() {
 	const today = new Date();
 	const weekNumber = today.getWeek() - 1;
 
+  useEffect(() => {
+    getCurrentUserUploadedNumbers()
+  }, []);
+
 	return (
 		<div className="App">
 			<header className="header">
@@ -103,11 +190,11 @@ function App() {
 					{userLoggedIn && <Avatar alt={userLoggedIn} src={userimages[userLoggedIn]} />}
 				</div>
 				<img src={logo} className="logo" alt="logo" />
-				<p>Családi lottó</p>
+				<p className="header-title">Családi lottó</p>
 			</header>
 			<div className="content">
 				{!userLoggedIn && 
-					<form name="login" onSubmit={login}>
+					<form name="login" onSubmit={login} className={classes.root}>
 						<FormControl variant="outlined" className={classes.formControl}>
 							<InputLabel id="name-label">Ki vagy?</InputLabel>
 							<Select
@@ -133,6 +220,7 @@ function App() {
 								<MenuItem value={"zoli"}>Zoli</MenuItem>
 							</Select>
 						</FormControl>
+						<TextField id="outlined-basic" label="Jelszó" type="password" variant="outlined" required />
 						<div className={classes.root}>
 							<Button type="submit" variant="contained" color="primary">
 								Belépek
@@ -140,19 +228,29 @@ function App() {
 						</div>
 					</form>
 				}
-				{userLoggedIn && // TODO: ha már játszott, ne jelenjen meg a lottózós táblázat
+				{userLoggedIn && !weeklyNumbersUploaded &&
 					<div>
-						<h3>Az eheti számok ({weekNumber}.hét):</h3>
-						<div className="lotto-inputs">
-							<LottoNumbers numbers={numbers} checkedNumbers={checkedNumbers} addItem={addItem}/>
+						<h3>Tedd meg a(z) {weekNumber}.heti tipped:</h3>
+						<div className={classes.root}>
+							<Button type="button" variant="contained" color="secondary" onClick={getNumbers}>
+								Előző heti számok másolása
+							</Button>
 						</div>
 						<div className={classes.root}>
-							<Button type="button" variant="contained" color="primary">
+							<Paper elevation={3}>
+								<div className="lotto-inputs">
+									<LottoNumbers numbers={numbers} checkedNumbers={checkedNumbers} addItem={addItem}/>
+								</div>
+							</Paper>
+						</div>
+						<div className={classes.root}>
+							<Button type="button" variant="contained" color="primary" onClick={ () => { uploadNumbers(checkedNumbers) } }>
 								Elküld
 							</Button>
 						</div>
 					</div>
 				}
+			{error !== '' && <Alert severity="error">{error}</Alert>}
 			</div>
 			<footer className="footer">
 				<p>Powered by TAJ 2021</p>
