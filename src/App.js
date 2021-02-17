@@ -74,6 +74,26 @@ const LottoNumbers = function(props) {
 	})
 };
 
+const NumbersAvatar = function(props) {
+	return props.randomNumbers.map(function(number) {
+		return(
+			<Avatar key={number}>{number}</Avatar>
+		)
+	})
+};
+
+const FixNumbers = function(props) {
+	return props.data.map(function(family) {
+		let familyMembers = family.family.split('&')
+		return <div className="family">
+				<Avatar className="member" alt={familyMembers[0]} src={userimages[familyMembers[0]]} />
+				<Avatar className="member" alt={familyMembers[1]} src={userimages[familyMembers[1]]} />
+				<NumbersAvatar randomNumbers={ family.numbers.split('|') }/>
+			</div>
+		
+	})
+};
+
 Date.prototype.getWeek = function() {
   var onejan = new Date(this.getFullYear(),0,1);
   return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
@@ -82,6 +102,8 @@ Date.prototype.getWeek = function() {
 function App() {
 	const [user, setUser] = useState('');
 	const [error, setError] = useState('');
+	const [randomNumbers, setRandomNumbers] = useState([]);
+	const [allNumbers, setAllNumbers] = useState([]);
 	const [weeklyNumbersUploaded, setWeeklyNumbersUploaded] = useState(false);
 	const [checkedNumbers, setNumbers] = useState([]);
 	const addItem = function(item) {
@@ -113,7 +135,7 @@ function App() {
 				}),
 			};
 		
-			fetch("https://taj.co.hu/lotto.php", requestOptions)
+			fetch("http://taj.co.hu/lotto.php", requestOptions)
 			.then(() => {
 				setWeeklyNumbersUploaded(true) 
 			})
@@ -136,7 +158,7 @@ function App() {
 			}),
 		};
 	
-		fetch("https://taj.co.hu/lotto.php", requestOptions)
+		fetch("http://taj.co.hu/lotto.php", requestOptions)
 			.then((response) => {
 				setNumbers(response.split('|'))
 			})
@@ -158,14 +180,60 @@ function App() {
 			}),
 		};
 	
-		fetch("https://taj.co.hu/lotto.php", requestOptions)
-			.then((response) => {
-				setWeeklyNumbersUploaded(true)
-			})
-			.catch(() => {
-				setError('Sajnálom, már induláskor elhasaltam, mint a szar... :(')
-			})
+		fetch("http://taj.co.hu/lotto.php", requestOptions)
+		.then(response => response.json())
+		.then(data => console.warn(data))
+/* 		.then((response) => {
+			if (response) {
+				console.warn(response)
+			}
+			// setWeeklyNumbersUploaded(true)
+		}) */
+		.catch((err) => {
+			console.warn(err)
+			setError('Sajnálom, már induláskor elhasaltam, mint a szar... :(')
+		})
 	}
+
+	// IDEIGLENES (?), ÖSSZES SZÁMOT LEKÉRŐ ENDPOINT
+	const getAllNumbers = function() {
+		const  requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				action: 'get_all',
+				payload: {
+					week: 6,
+				},
+			}),
+		};
+	
+		fetch("http://taj.co.hu/lotto.php", requestOptions)
+		.then(response => response.json())
+		.then(data => setAllNumbers(data))
+		.catch((err) => {
+			console.warn(err)
+			setError('Sajnálom, már induláskor elhasaltam, mint a szar... :(')
+		})
+	}
+
+	const getRandomNumbers = function() {
+		const  requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				action: 'get_random',
+				payload: {},
+			}),
+		};
+	
+		return fetch("http://taj.co.hu/lotto.php", requestOptions)
+		.then(response => response.json())
+		.then(data => {
+			setRandomNumbers(data)
+		})
+		
+	};
 
 	const classes = useStyles();
 	const handleChange = (event) => {
@@ -178,9 +246,10 @@ function App() {
 	const today = new Date();
 	const weekNumber = today.getWeek() - 1;
 
-  useEffect(() => {
-    getCurrentUserUploadedNumbers()
-  }, []);
+	useEffect(() => {
+		// userLoggedIn && getCurrentUserUploadedNumbers();
+		getAllNumbers();
+	}, []);
 
 	return (
 		<div className="App">
@@ -193,7 +262,7 @@ function App() {
 				<p className="header-title">Családi lottó</p>
 			</header>
 			<div className="content">
-				{!userLoggedIn && 
+				{/* {!userLoggedIn && 
 					<form name="login" onSubmit={login} className={classes.root}>
 						<FormControl variant="outlined" className={classes.formControl}>
 							<InputLabel id="name-label">Ki vagy?</InputLabel>
@@ -245,12 +314,24 @@ function App() {
 						</div>
 						<div className={classes.root}>
 							<Button type="button" variant="contained" color="primary" onClick={ () => { uploadNumbers(checkedNumbers) } }>
-								Elküld
+								Heti számok rögzítése
 							</Button>
 						</div>
 					</div>
-				}
+				} */}
+			<h3>Fix számok:</h3>
+			<div className="fix-numbers">
+				<FixNumbers data={allNumbers}/>
+			</div>
 			{error !== '' && <Alert severity="error">{error}</Alert>}
+			<div className={classes.root}>
+				<Button type="button" variant="contained" color="primary" onClick={ ()=> getRandomNumbers() }>
+					Heti közös kalapból sorsolás
+				</Button>
+			</div>
+			<div className="random-numbers">
+				<NumbersAvatar randomNumbers={randomNumbers}/>
+			</div>
 			</div>
 			<footer className="footer">
 				<p>Powered by TAJ 2021</p>

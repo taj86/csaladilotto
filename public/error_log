@@ -1,0 +1,35 @@
+[12-Feb-2021 11:10:40 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:10:44 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:11:46 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:12:06 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:13:05 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:13:08 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:13:19 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:13:48 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:13:57 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:14:28 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:14:33 Europe/Budapest] PHP Warning:  mysqli_fetch_all() expects parameter 1 to be mysqli_result, boolean given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:22:30 Europe/Budapest] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_fetch() in /home/tajcohu1/public_html/lotto.php:44
+Stack trace:
+#0 /home/tajcohu1/public_html/lotto.php(14): getHasUploaded(Object(mysqli), 6, 'taj')
+#1 {main}
+  thrown in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:23:18 Europe/Budapest] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_fetch() in /home/tajcohu1/public_html/lotto.php:44
+Stack trace:
+#0 /home/tajcohu1/public_html/lotto.php(14): getHasUploaded(Object(mysqli), 6, 'taj')
+#1 {main}
+  thrown in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:23:28 Europe/Budapest] PHP Fatal error:  Uncaught Error: Call to undefined function mysql_fetch_row() in /home/tajcohu1/public_html/lotto.php:44
+Stack trace:
+#0 /home/tajcohu1/public_html/lotto.php(14): getHasUploaded(Object(mysqli), 6, 'taj')
+#1 {main}
+  thrown in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:24:59 Europe/Budapest] PHP Fatal error:  Uncaught Error: Call to undefined function mysql_fetch_row() in /home/tajcohu1/public_html/lotto.php:44
+Stack trace:
+#0 /home/tajcohu1/public_html/lotto.php(14): getHasUploaded(Object(mysqli), 6, 'taj')
+#1 {main}
+  thrown in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:25:17 Europe/Budapest] PHP Warning:  mysqli_fetch_row() expects exactly 1 parameter, 2 given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:25:32 Europe/Budapest] PHP Warning:  mysqli_fetch_row() expects exactly 1 parameter, 2 given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:25:45 Europe/Budapest] PHP Warning:  mysqli_fetch_row() expects exactly 1 parameter, 2 given in /home/tajcohu1/public_html/lotto.php on line 44
+[12-Feb-2021 11:25:51 Europe/Budapest] PHP Warning:  mysqli_fetch_row() expects exactly 1 parameter, 2 given in /home/tajcohu1/public_html/lotto.php on line 44

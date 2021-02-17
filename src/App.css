@@ -94,6 +94,27 @@ body {
 .content .lotto-inputs .lotto-number input {
   display: none;
 }
+.content .random-numbers {
+  display: flex;
+}
+.content .fix-numbers {
+  display: flex;
+  flex-direction: column;
+}
+.content .fix-numbers .family {
+  display: flex;
+  margin: 0.5rem 0;
+  align-items: center;
+}
+.content .MuiAvatar-colorDefault {
+  background-color: #8DC63F;
+}
+.content .MuiAvatar-circle + .MuiAvatar-circle {
+  margin-left: 0.5rem;
+}
+.content .MuiAvatar-circle + .MuiAvatar-circle.member {
+  margin-left: 0rem;
+}
 .footer {
   background-color: #282c34;
   display: flex;
