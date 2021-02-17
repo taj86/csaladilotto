@@ -100,100 +100,9 @@ Date.prototype.getWeek = function() {
 }
 
 function App() {
-	const [user, setUser] = useState('');
 	const [error, setError] = useState('');
 	const [randomNumbers, setRandomNumbers] = useState([]);
 	const [allNumbers, setAllNumbers] = useState([]);
-	const [weeklyNumbersUploaded, setWeeklyNumbersUploaded] = useState(false);
-	const [checkedNumbers, setNumbers] = useState([]);
-	const addItem = function(item) {
-		setError('');
-		if (checkedNumbers.includes(item)) {
-			let newNumbers = checkedNumbers.filter(function(itemToRemove) {
-				return itemToRemove !== item
-			});
-			setNumbers(newNumbers);
-		} else if (checkedNumbers.length < 5) {
-			setNumbers([...checkedNumbers, item]);
-		}
-	};
-
-	const uploadNumbers = function(numbers) {
-		setError('')
-		if (numbers.length < 5) {
-			setError('Megtaníthatlak 5-ig számolni...')
-		} else {
-			const  requestOptions = {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					action: 'upload_numbers',
-					payload: {
-						numbers: numbers.sort().join('|'),
-						user: userLoggedIn
-					},
-				}),
-			};
-		
-			fetch("http://taj.co.hu/lotto.php", requestOptions)
-			.then(() => {
-				setWeeklyNumbersUploaded(true) 
-			})
-			.catch(() => {
-				setError('Sajnálom, nem sikerült feltölteni... :(')
-			})
-		}
-	}
-
-	const getNumbers = function() {
-		const  requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				action: 'get_numbers',
-				payload: {
-					week: weekNumber-1,
-					user: userLoggedIn
-				},
-			}),
-		};
-	
-		fetch("http://taj.co.hu/lotto.php", requestOptions)
-			.then((response) => {
-				setNumbers(response.split('|'))
-			})
-			.catch(() => {
-				setError('Sajnálom, nem sikerült lekérni... :(')
-			})
-	}
-
-	const getCurrentUserUploadedNumbers = function() {
-		const  requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				action: 'get_hasuploaded',
-				payload: {
-					week: weekNumber,
-					user: userLoggedIn
-				},
-			}),
-		};
-	
-		fetch("http://taj.co.hu/lotto.php", requestOptions)
-		.then(response => response.json())
-		.then(data => console.warn(data))
-/* 		.then((response) => {
-			if (response) {
-				console.warn(response)
-			}
-			// setWeeklyNumbersUploaded(true)
-		}) */
-		.catch((err) => {
-			console.warn(err)
-			setError('Sajnálom, már induláskor elhasaltam, mint a szar... :(')
-		})
-	}
 
 	// IDEIGLENES (?), ÖSSZES SZÁMOT LEKÉRŐ ENDPOINT
 	const getAllNumbers = function() {
@@ -236,28 +145,18 @@ function App() {
 	};
 
 	const classes = useStyles();
-	const handleChange = (event) => {
-		setUser(event.target.value);
-	};
-	const login = () => {
-		localStorage.setItem('user', user);
-	};
-	const userLoggedIn = localStorage.getItem('user');
-	const today = new Date();
-	const weekNumber = today.getWeek() - 1;
 
 	useEffect(() => {
-		// userLoggedIn && getCurrentUserUploadedNumbers();
 		getAllNumbers();
 	}, []);
 
 	return (
 		<div className="App">
 			<header className="header">
-				<div className="header-box">
+				{/* <div className="header-box">
 					{userLoggedIn && <label>{'Hello @' + userLoggedIn + '!'}</label>}
 					{userLoggedIn && <Avatar alt={userLoggedIn} src={userimages[userLoggedIn]} />}
-				</div>
+				</div> */}
 				<img src={logo} className="logo" alt="logo" />
 				<p className="header-title">Családi lottó</p>
 			</header>
@@ -325,7 +224,7 @@ function App() {
 			</div>
 			{error !== '' && <Alert severity="error">{error}</Alert>}
 			<div className={classes.root}>
-				<Button type="button" variant="contained" color="primary" onClick={ ()=> getRandomNumbers() }>
+				<Button type="button" disabled={randomNumbers.length > 0} variant="contained" color="primary" onClick={ ()=> getRandomNumbers() }>
 					Heti közös kalapból sorsolás
 				</Button>
 			</div>
